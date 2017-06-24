@@ -14,22 +14,35 @@ function [ b ] = maxEntrCoords( omega, v )
 % Outputs:
 % b : [b1v, ..., bnv] barycentric coordinates for v in omega.
 
+if(length(v(1,:))==1) %If the point is given as column vector
+    v = v.';          %Transform to line vector
+end
 b = zeros(length(omega),length(omega(1)));
 
 
 
 %1)
-vtilde = arrayfun(@(vi) vi-v, omega);
-m = ones(length(omega)); % Using constant priors, this has to be updated
+vtilde = zeros(length(omega),length(omega(1,:)));
+for i = 1:length(omega)
+    vtildei = vtilde(i,:);
+    omegai = omega(i,:);
+    
+    vtilde(i,:) = omega(i,:)-v;
+end
+m = ones(1,length(omega)); % Using constant priors, this has to be updated
 
 %2)
 k = 0;
 lambda = 0;
 epsilon = 10e-10;
 
-while True
+while true
     %3)
-    f,g,H = brownfgh(lambda);
+    %In the paper they talk about the gradient and the Hessian, but as
+    %these are scalar functions, these are just the first and second
+    %derivative at lambda.
+    [g,~] = derivest(@F,lambda); 
+    [H,~] = derivest(@F,lambda,'DerivativeOrder',2);
     
     %4)
     deltalambda = -(1/H) * g;
@@ -55,19 +68,21 @@ end
 
     % Z is the partition function
     function [zi] = Zi(lambda,j)
-        zi = m(i)*exp((-lambda)*vtilde(j));
+        vtildej = vtilde(j,:);
+        zi = m(j)*exp((-lambda)*norm(vtildej));
     end
 
     function [z] = Z(lambda)
         z = 0;
         for j = 1:length(omega)
-            z = z + zi(lambda,j);
+            z = z + Zi(lambda,j);
         end
     end
 
     % F 
     function [f] = F(lambda)
-        f = ln(Z(lambda));
+        zlambda = Z(lambda);
+        f = log(zlambda);
     end
 
 
