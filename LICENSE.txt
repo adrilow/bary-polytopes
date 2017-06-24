@@ -1,0 +1,30 @@
+#License for new contributions:
+
+MATLAB Functions to calculate barycentric coordinates on convex polytopes using the Mean-Value and the Maximum Entropy Methods.
+Copyright (C) 2017  Adrián Löwenberg
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+
+#Licenses of bundled software/libraries:
+
+--------------------------------------------------------------------------------
+YALMIP is free of charge to use and is openly distributed, but note that
+1. Copyright owned by Johan Lofberg.
+2. YALMIP must be referenced when used in a published work (give me some credit for saving your valuable time!)
+3. YALMIP, or forks or versions of YALMIP, may not be re-distributed as a part of a commercial product unless agreed upon with the copyright owner (if you make money from YALMIP, let me in first!)
+4. YALMIP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE (if your satellite crash or you fail your Phd due to a bug in YALMIP, your loss!).
+5. Forks or versions of YALMIP must include, and follow, this license in any distribution.
+--------------------------------------------------------------------------------
