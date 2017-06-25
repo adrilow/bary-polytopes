@@ -24,9 +24,6 @@ b = zeros(length(omega),length(omega(1)));
 %1)
 vtilde = zeros(length(omega),length(omega(1,:)));
 for i = 1:length(omega)
-    vtildei = vtilde(i,:);
-    omegai = omega(i,:);
-    
     vtilde(i,:) = omega(i,:)-v;
 end
 m = ones(1,length(omega)); % Using constant priors, this has to be updated
@@ -41,18 +38,26 @@ while true
     %In the paper they talk about the gradient and the Hessian, but as
     %these are scalar functions, these are just the first and second
     %derivative at lambda.
-    [g,~] = derivest(@F,lambda); 
-    [H,~] = derivest(@F,lambda,'DerivativeOrder',2);
+    [g,~] = derivest(@F,lambda,'DerivativeOrder',1)
+    [H,~] = derivest(@F,lambda,'DerivativeOrder',2)
+    
+    %Warning: Function fails on array inputs. Use element-wise operators to increase speed. 
+    %Why? All operators are element-wise...
+    fplot(@F,[lambda-0.5,lambda+0.5]);
     
     %4)
-    deltalambda = -(1/H) * g;
+    deltalambda = -(g/H); % - (1/F''(lambda) * F'(lambda)) -> Newton
     
     %5)
     alpha = 1; %for the moment
     lambda = lambda + (alpha * deltalambda);
     
     %6)
-    if (norm(gradient(F(lambda))) <= epsilon)
+    %The algorithm checks for the next g = f', but I think it's not
+    %necessary.
+    %[g,~] = derivest(@F,lambda)
+    convcheck = abs(g) %check for convergence
+    if (convcheck <= epsilon)
         break;
     else
         k = k+1
@@ -68,12 +73,18 @@ end
 
     % Z is the partition function
     function [zi] = Zi(lambda,j)
-        vtildej = vtilde(j,:);
-        zi = m(j)*exp((-lambda)*norm(vtildej));
+        
+        zi = zeros(length(lambda),1);
+        
+        for it = 1:length(lambda);
+            vtildej = vtilde(j,:);
+            expresult = exp((-lambda(it))*norm(vtildej));
+            zi(it) = m(j)*expresult;
+        end
     end
 
     function [z] = Z(lambda)
-        z = 0;
+        z = zeros(length(lambda),1);
         for j = 1:length(omega)
             z = z + Zi(lambda,j);
         end
@@ -81,8 +92,11 @@ end
 
     % F 
     function [f] = F(lambda)
+        f = zeros(length(lambda),1);
         zlambda = Z(lambda);
-        f = log(zlambda);
+        for it = 1:length(lambda)
+            f(it) = log(zlambda(it));
+        end
     end
 
 

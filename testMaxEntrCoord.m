@@ -19,7 +19,7 @@ for i = 1:1
     points = randi([dim+1,dim*10]); % number of points
     setindim = zeros(points,dim); % points in the 100^d Hypercube with an edge in [0,...,0]
     for d = 1:points
-        setindim(d,:) = 100.*rand(1,2);
+        setindim(d,:) = 100.*rand(1,dim);
     end
     P = Polyhedron(setindim); %generate Polyhedron from the given points
     U = PolyUnion(P); %The converHull method is defined on Polyunion
