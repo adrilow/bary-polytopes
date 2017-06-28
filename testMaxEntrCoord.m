@@ -44,7 +44,8 @@ for i = 1:1
     disp('On the point:')
     disp(v)
     
-    b = maxEntrCoords(omega,v) %Calculate b1,...,bn for the Point v in the Polytope omega.
+    b = maxEntrCoords(omega,v); %Calculate b1,...,bn for the Point v in the Polytope omega.
+    disp(fprintf(strcat('b_i: \n',mat2str(b))))
     
     %Test of Positivity
     disp('Testing positivity...')

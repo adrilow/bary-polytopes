@@ -31,7 +31,7 @@ m = ones(1,length(omega)); % Using constant priors, this has to be updated
 %2)
 k = 0;
 lambda = zeros(1,length(omega(1,:)));
-epsilon = 10e-10;
+epsilon = 10e-5;
 
 while true
     %3)
@@ -59,6 +59,8 @@ while true
         k = k+1;
     end
 end
+
+disp(strcat('Iterations performed: ',int2str(k+1)))
 
 %7)
 for i = 1:length(omega)
