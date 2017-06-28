@@ -62,7 +62,8 @@ for i = 1:1
     for j = 1:length(b)
         vIs = vIs + b(j)*omega(j,:);
     end
-    dist = pdist([vIs.',v],'euclidean');
+    
+    dist = norm(vIs.'-v);
     disp(strcat('Should: ',mat2str(v.'),' Is: ',mat2str(vIs), ' Distance: ',mat2str(dist)))
     if(dist > 10e-10) %note that epsilon is only defined for part. of unity, but this way some error due to rounding et al. is allowed
         disp('Failed')

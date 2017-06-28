@@ -30,37 +30,33 @@ m = ones(1,length(omega)); % Using constant priors, this has to be updated
 
 %2)
 k = 0;
-lambda = 0;
+lambda = zeros(1,length(omega(1,:)));
 epsilon = 10e-10;
 
 while true
     %3)
-    %In the paper they talk about the gradient and the Hessian, but as
-    %these are scalar functions, these are just the first and second
-    %derivative at lambda.
-    [g,~] = derivest(@F,lambda,'DerivativeOrder',1)
-    [H,~] = derivest(@F,lambda,'DerivativeOrder',2)
     
-    %Warning: Function fails on array inputs. Use element-wise operators to increase speed. 
-    %Why? All operators are element-wise...
-    fplot(@F,[lambda-0.5,lambda+0.5]);
+    %Symbolic version of the F function
+    [H,~] = hessian(@F,lambda);
+    [g,~,~] = gradest(@F,lambda);
+    
     
     %4)
-    deltalambda = -(g/H); % - (1/F''(lambda) * F'(lambda)) -> Newton
+    deltalambda = -( (H^(-1)) *g.' );
     
     %5)
     alpha = 1; %for the moment
-    lambda = lambda + (alpha * deltalambda);
+    lambda = lambda + (alpha * deltalambda.');
     
     %6)
     %The algorithm checks for the next g = f', but I think it's not
     %necessary.
     %[g,~] = derivest(@F,lambda)
-    convcheck = abs(g) %check for convergence
+    convcheck = norm(g); %check for convergence
     if (convcheck <= epsilon)
         break;
     else
-        k = k+1
+        k = k+1;
     end
 end
 
@@ -69,34 +65,23 @@ for i = 1:length(omega)
     b(i) = Zi(lambda,i) / Z(lambda);
 end
 
-% Helper functions
+% Helper functions 
 
     % Z is the partition function
     function [zi] = Zi(lambda,j)
-        
-        zi = zeros(length(lambda),1);
-        
-        for it = 1:length(lambda);
-            vtildej = vtilde(j,:);
-            expresult = exp((-lambda(it))*norm(vtildej));
-            zi(it) = m(j)*expresult;
-        end
+        zi = m(j)*exp(dot(-lambda,vtilde(j,:)));
     end
 
     function [z] = Z(lambda)
-        z = zeros(length(lambda),1);
+        z = 0;
         for j = 1:length(omega)
-            z = z + Zi(lambda,j);
+            z = z+ Zi(lambda,j);
         end
     end
 
     % F 
     function [f] = F(lambda)
-        f = zeros(length(lambda),1);
-        zlambda = Z(lambda);
-        for it = 1:length(lambda)
-            f(it) = log(zlambda(it));
-        end
+        f = log(Z(lambda));
     end
 
 
