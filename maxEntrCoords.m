@@ -60,7 +60,7 @@ while true
     end
 end
 
-disp(strcat('Iterations performed: ',int2str(k+1)))
+%disp(strcat('Iterations performed: ',int2str(k+1)))
 
 %7)
 for i = 1:length(omega)

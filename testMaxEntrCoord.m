@@ -12,7 +12,10 @@ function [] = testMaxEntrCoord( dim )
 
 %Generate 1000 random Polytopes of dimension <= dim
 disp(strcat('Initializing test with dim:',int2str(dim)))
-for i = 1:1
+runtime_average = 0;
+runs = 1000;
+tic;
+for i = 1:runs
     
     disp(strcat(int2str(i),'-th Iteration'))
     
@@ -44,7 +47,10 @@ for i = 1:1
     disp('On the point:')
     disp(v)
     
+    tstart = tic;
     b = maxEntrCoords(omega,v); %Calculate b1,...,bn for the Point v in the Polytope omega.
+    runtime_average = runtime_average + toc(tstart)/runs;
+    
     disp(fprintf(strcat('b_i: \n',mat2str(b))))
     
     %Test of Positivity
@@ -58,7 +64,7 @@ for i = 1:1
     disp('Passed')
     
     %Test of Linear Precission
-    disp('Testing linear precission')
+    disp('Testing linear precission...')
     vIs = zeros(1,dim);
     for j = 1:length(b)
         vIs = vIs + b(j)*omega(j,:);
@@ -87,7 +93,7 @@ for i = 1:1
     disp('All tests passed')
     
 end
-
+disp(strcat('The average runtime was: ',num2str(runtime_average),'s.'));
 
 end
 
