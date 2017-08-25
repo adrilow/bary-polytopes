@@ -13,13 +13,14 @@ function [] = testMaxEntrCoord( dim )
 %Generate 1000 random Polytopes of dimension <= dim
 disp(strcat('Initializing test with dim:',int2str(dim)))
 runtime_average = 0;
-runs = 1000;
+runs = 1;
 tic;
 for i = 1:runs
     
     disp(strcat(int2str(i),'-th Iteration'))
     
-    points = randi([dim+1,dim*10]); % number of points
+    %points = randi([dim+1,dim*10]); % number of points
+    points = 20;
     setindim = zeros(points,dim); % points in the 100^d Hypercube with an edge in [0,...,0]
     for d = 1:points
         setindim(d,:) = 100.*rand(1,dim);
@@ -48,7 +49,7 @@ for i = 1:runs
     disp(v)
     
     tstart = tic;
-    b = maxEntrCoords(omega,v); %Calculate b1,...,bn for the Point v in the Polytope omega.
+    b = maxEntrCoordsSym(omega,v); %Calculate b1,...,bn for the Point v in the Polytope omega.
     runtime_average = runtime_average + toc(tstart)/runs;
     
     disp(fprintf(strcat('b_i: \n',mat2str(b))))
