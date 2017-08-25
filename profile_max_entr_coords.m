@@ -1,20 +1,15 @@
-function [] = profileMaxEntrCoords()
-%Profile the generation of coordinates for several dimensions and number of
-%points in the convex hull.
-%   Every dimension starts with the minimum number of vertices for a
-%   simplex (dim+1), until 100*dim. Interesting is the behaviour in 10-15
-%   dimensional spaces.
+function [] = profile_max_entr_coords() 
 
-for dim= 13:20% 2:20 
-    results = zeros(3,(100*dim-(dim+1)));
+%profile on -history
+for dim= 2:2% 2:20 
+    results = zeros(2,(100*dim-(dim+1)));
     it = 1;
-    for points = dim+1:25:dim*100 %really dim*100
-        disp(strcat(strcat('Initializing test with dim:',int2str(dim)),strcat(' and number of points: ',int2str(points))))
+    for points = dim+1:dim*5 %really dim*100
+        disp(strcat('Initializing test with dim:',int2str(dim)))
         runtime_average = 0;
-        iterations_average = 0;
         tic;
         
-        runs = 25; %for testing, this number has to be bigger
+        runs = 2; %for testing, this number has to be bigger
         for i = 1:runs %runs, for computing average
     
             %disp(strcat(int2str(i),'-th Iteration'))
@@ -45,19 +40,21 @@ for dim= 13:20% 2:20
             %disp(v)
     
             tstart = tic;
-            [b,K] = maxEntrCoords(omega,v); %Calculate b1,...,bn for the Point v in the Polytope omega.
+            b = maxEntrCoords(omega,v); %Calculate b1,...,bn for the Point v in the Polytope omega.
             runtime_average = runtime_average + toc(tstart)/runs;
-            iterations_average = iterations_average + (double(K) / runs);
     
             %disp(fprintf(strcat('b_i: \n',mat2str(b))))
     
         end
         results(1,it) = points;
         results(2,it) = runtime_average;
-        results(3,it) = iterations_average;
         it = it+1;
-        csvwrite(strcat(int2str(dim),'-Dimensions_v3-25.csv'),results);
     end
+    %csvwrite(strcat(int2str(dim),'-Dimensions.csv'),results);
 end
+%p = profile('info')
+%profsave(p);
+%profile off
+%DataField = fieldnames(p);
+%jsonencode(struct2cell(p.(DataField{1})));
 end
-

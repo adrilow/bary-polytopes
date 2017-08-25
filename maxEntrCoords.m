@@ -1,4 +1,4 @@
-function [ b ] = maxEntrCoords( omega, v )
+function [ b, K ] = maxEntrCoords( omega, v )
 % maxEntrCoords Calculates maximum entropy coordinates for a given Polytope
 %
 % Uses Algorithm by Hormann & Sukumar (2008), currently with constant
@@ -35,11 +35,9 @@ epsilon = 10e-5;
 
 while true
     %3)
+
     
-    %Symbolic version of the F function
-    [H,~] = hessian(@F,lambda);
-    [g,~,~] = gradest(@F,lambda);
-    
+    [g,H,~] = gradandhessian(@F,lambda);
     
     %4)
     deltalambda = -( (H^(-1)) *g.' );
@@ -66,19 +64,22 @@ end
 for i = 1:length(omega)
     b(i) = Zi(lambda,i) / Z(lambda);
 end
+K = k;
 
 % Helper functions 
 
     % Z is the partition function
     function [zi] = Zi(lambda,j)
-        zi = m(j)*exp(dot(-lambda,vtilde(j,:)));
+        %zi = m(j)*exp(dot(-lambda,vtilde(j,:)));
+        zi = m(j)*exp(-(lambda*vtilde(j,:).'));;
     end
 
     function [z] = Z(lambda)
-        z = 0;
-        for j = 1:length(omega)
-            z = z+ Zi(lambda,j);
-        end
+        %It calls Z_i on every vertex
+        res = arrayfun(@(x) Zi(lambda,x),1:length(omega));
+        %And returns the result
+        z = sum(res);
+
     end
 
     % F 
@@ -86,6 +87,13 @@ end
         f = log(Z(lambda));
     end
 
+
+    function [f] = Fsym(lambda)
+        res = arrayfun(@(x) sym(m(x)*exp(dot(-lambda,sym(vtilde(x,:))))),...
+        1:length(omega));
+        res = sum(res);
+        f = log(res);
+    end
 
 end
 
